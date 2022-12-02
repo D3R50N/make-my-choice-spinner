@@ -1,12 +1,13 @@
 const list = document.getElementById("list");
 const spin_btn = document.getElementById("spin_btn");
 const add_btn = document.getElementById("add_btn");
+const save_btn = document.getElementById("save_btn");
 
 const cv = document.createElement("canvas");
 const cx = cv.getContext("2d");
 document.getElementById("canvasRenderer").appendChild(cv);
 
-var cb, resolution, cw, ch, ratio, center_x, center_y, spinner_radius, pointer_h, pointer_radius, pointer_semi_angle;
+var cb, resolution, cw, ch, ratio, center_x, center_y, spinner_radius, pointer_h, pointer_radius, pointer_semi_angle, final_text = "";
 
 
 const rad = (angle) => angle * Math.PI / 180;
@@ -104,6 +105,14 @@ function spin() {
     drawAllParts();
     cx.restore();
 
+
+    cx.fillStyle = colors[getSpinIndex()];
+    cx.strokeStyle = "#16161D";
+    const fontsize = 70;
+    cx.font = fontsize + "px arial";
+    cx.fillText(final_text, fontsize, center_y - spinner_radius - fontsize);
+    cx.strokeText(final_text, fontsize, center_y - spinner_radius - fontsize);
+
     spin_angle += velocity;
     spin_angle %= 360;
     velocity *= decceleration; // slow down
@@ -112,16 +121,18 @@ function spin() {
     }
 }
 
+//? if wins
 function showChoice() {
     velocity = 0;
     var s_index = getSpinIndex();
     list.children[s_index].style.translate = "-20px";
     list.children[s_index].querySelector("input").style.borderColor = colors[s_index];
-    canRun = false;
 
     cx.fillStyle = colors[s_index];
     cx.strokeStyle = "#16161D";
-    cx.fillText(list.children[s_index].querySelector("input").value, -100, -200);
+    final_text = list.children[s_index].querySelector("input").value;
+    setTimeout(() => canRun = false, 200);
+
 }
 
 function getSpinIndex() {
@@ -153,6 +164,54 @@ function initCanvas() {
 
 }
 
+
+
+function addItem(value = "") {
+    const div1 = document.createElement("div");
+    div1.classList = "row my-2 item d-flex";
+    const div2 = document.createElement("div");
+    div2.classList = "m-1 rounded-circle p-1 dot my-auto";
+    const div3 = document.createElement("div");
+    const input = document.createElement("input");
+    input.classList = "form-control";
+    input.value = value;
+    div3.classList = "col";
+
+    div3.appendChild(input);
+    div1.appendChild(div2);
+    div1.appendChild(div3);
+    list.appendChild(div1);
+
+    input.focus();
+    autoChangeInput();
+
+    nbParts = list.children.length;
+    pie_angle = 360 / nbParts;
+}
+
+function autoChangeInput() {
+    document.querySelectorAll("input").forEach((input, key) => {
+        input.onchange = null;
+        input.addEventListener("change", (e) => {
+            console.log(key);
+            if (key + 1 < document.querySelectorAll("input").length)
+                document.querySelectorAll("input")
+                    .item(key + 1).focus();
+            else
+                document.querySelectorAll("input")
+                    .item(key).blur()
+        });
+    });
+}
+
+
+function loadSaved() {
+    let tab = localStorage.getItem("saved");
+    if (tab == null || tab == undefined) return;
+    
+    tab.split(",").forEach((value)=>addItem(value))
+}
+
 function run() {
     if (!canRun) return;
     cx.clearRect(0, 0, cw, ch);
@@ -161,12 +220,21 @@ function run() {
     requestAnimationFrame(run);
 }
 
+save_btn.addEventListener("click", (e) => {
+    let tab = [];
+    for (const child of list.children) {
+        tab.push(child.querySelector("input").value);
+    }
+    localStorage.setItem("saved", tab);
+    alert("Saved");
+
+})
+
 
 add_btn.addEventListener("click", (e) => {
     addItem();
-
-    nbParts = list.children.length;
-    pie_angle = 360 / nbParts;
+    final_text = "";
+    
     cx.clearRect(0, 0, cw, ch);
 
     cx.save();
@@ -179,8 +247,17 @@ add_btn.addEventListener("click", (e) => {
 
 })
 spin_btn.addEventListener("click", (e) => {
-    // spin_angle = 0;
-    // colors = [];
+
+    if (list.children.length == 0) {
+        alert("Add items first");
+        return;
+    }
+    else if (list.children.length == 1) {
+        alert("Add two or more items");
+        return
+    }
+    final_text = "";
+
     has_started = true;
     var s_index = getSpinIndex()
     list.children[s_index].style.translate = "0px"
@@ -197,42 +274,7 @@ window.onresize = () => {
 }
 
 
-
-function addItem() {
-    const div1 = document.createElement("div");
-    div1.classList = "row my-2 item d-flex";
-    const div2 = document.createElement("div");
-    div2.classList = "m-1 rounded-circle p-1 dot my-auto";
-    const div3 = document.createElement("div");
-    const input = document.createElement("input");
-    input.classList = "form-control";
-    div3.classList = "col";
-
-    div3.appendChild(input);
-    div1.appendChild(div2);
-    div1.appendChild(div3);
-    list.appendChild(div1);
-
-    input.focus();
-    autoChangeInput();
-}
-
-function autoChangeInput() {
-    document.querySelectorAll("input").forEach((input, key) => {
-        input.onchange = null;
-            input.addEventListener("change", (e) => {
-                console.log(key);
-                if (key + 1 < document.querySelectorAll("input").length)
-                    document.querySelectorAll("input")
-                        .item(key + 1).focus();
-                else 
-                     document.querySelectorAll("input")
-                        .item(key).blur()
-            });
-    });
-}
-
-
+loadSaved()
 initCanvas();
 spin();
 pointerBase();

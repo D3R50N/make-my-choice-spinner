@@ -232,6 +232,12 @@ save_btn.addEventListener("click", (e) => {
 
 
 add_btn.addEventListener("click", (e) => {
+    if (list.children.length > 1) {
+        var s_index = getSpinIndex()
+        list.children[s_index].style.translate = "0px"
+        list.children[s_index].querySelector("input").style.borderColor = "";
+    }
+
     addItem();
     final_text = "";
     

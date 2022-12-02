@@ -1,3 +1,4 @@
+//#region 
 const list = document.getElementById("list");
 const spin_btn = document.getElementById("spin_btn");
 const add_btn = document.getElementById("add_btn");
@@ -24,9 +25,16 @@ const getMin = (index) => {
     return pie_angle * index;
 }
 const getMax = (index) => {
-
     return getMin(index) + pie_angle;
 }
+
+// Color picker
+var colorPicker = new iro.ColorPicker(".colorPicker", {
+    width: 150,
+    color: "rgb(255, 0, 0)",
+    borderWidth: 1,
+    borderColor: "#fff",
+});
 
 
 var nbParts = list.children.length;
@@ -93,8 +101,8 @@ function drawPart(index) {
 function drawAllParts() {
     for (let index = 0; index < nbParts; index++) {
         drawPart(index);
-        list.children[index].querySelector(".dot").style.backgroundColor
-            = colors[index];
+        list.children[index].querySelector(".dot").style.backgroundColor = colors[index];
+        list.children[index].querySelector(".dot").dataset.index = index;
     }
 }
 function spin() {
@@ -170,7 +178,7 @@ function addItem(value = "") {
     const div1 = document.createElement("div");
     div1.classList = "row my-2 item d-flex";
     const div2 = document.createElement("div");
-    div2.classList = "m-1 rounded-circle p-1 dot my-auto";
+    div2.classList = "m-1 rounded-circle p-1 dot pointer my-auto";
     const div3 = document.createElement("div");
     const input = document.createElement("input");
     input.classList = "form-control";
@@ -218,6 +226,23 @@ function run() {
     spin();
     pointerBase();
     requestAnimationFrame(run);
+}
+
+function after_color_picker(index){
+    cx.clearRect(0, 0, cw, ch);
+
+    cx.save();
+    cx.translate(center_x, center_y);
+    cx.rotate(-rad(spin_angle));
+    spinnerBase();
+    
+    for (let index = 0; index < nbParts; index++) {
+        drawPart(index);
+        list.children[index].querySelector(".dot").style.backgroundColor = colors[index];
+    }
+
+    cx.restore();
+    pointerBase();
 }
 
 save_btn.addEventListener("click", (e) => {
@@ -279,9 +304,36 @@ window.onresize = () => {
     pointerBase();
 }
 
+$(document).ready(function() {
+
+    var index = 0;
+
+    $(document).on('click', '.dot', function(e) {
+        
+        // get the color and index of the dot
+        var color = $(this).css('background-color');
+        index = $(this).data('index');
+        colorPicker.color.set(color);
+
+    });
+
+    colorPicker.on("color:change", function (color) {
+
+        $('.picker_container').css('border', '1px solid ' + color.hexString);
+        colors[index] = color.rgbString;
+
+        spin();
+        pointerBase();  
+    });
+
+
+})
+
 
 loadSaved()
 initCanvas();
 spin();
 pointerBase();
 autoChangeInput();
+
+//#endregion

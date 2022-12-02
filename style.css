@@ -31,6 +31,7 @@ canvas {
 .right {
     position: absolute;
     right: 0;
+    height: 100%;
 }
 
 .dot {
@@ -38,6 +39,22 @@ canvas {
     height: 15px;
     transition-duration: 1s;
     border: 1px solid;
+}
+
+.pointer {
+    cursor: pointer;
+}
+
+.picker_container{
+    margin-bottom: 75px;
+    padding: 25px;
+    border-radius: 5px;
+}
+
+.colorPicker{
+    width: 150px;
+    margin-left: auto;
+    margin-right: auto;
 }
 
 footer {

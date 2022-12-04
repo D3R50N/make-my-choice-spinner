@@ -14,37 +14,38 @@
 
 <body>
   <div class="row content">
-    <div class="col-8 left">
-      <div id="canvasRenderer"></div>
+    <div class="col-8">
+
     </div>
-    <div class="col-4 right d-flex flex-column justify-content-between">
-      <div class="spin-tools">
-        <div class="btns">
-          <div class="row mt-4">
-            <button class="col btn mx-2" id="add_btn">Add item</button>
-            <button class="col btn btn-dark mx-2" id="save_btn">Save</button>
-          </div>
-
-          <div class="row mt-4">
-            <button class="col btn font-weight-bold btn-outline-dark mx-2" id="spin_btn">
-              Spin the wheel
-            </button>
-          </div>
+    <div class="col">
+      <div class="btns">
+        <div class="row mt-4">
+          <button class="col btn mx-2" id="add_btn">Add item</button>
+          <button class="col btn btn-dark mx-2" id="save_btn">Save</button>
         </div>
 
-        <div class="list-inner mt-4 h-100">
-          <h3 class="text-center text-muted font-weight-bold ">List of items</h3>
-          <div class="mt-5 form-group" id="list"></div>
+        <div class="row mt-4">
+          <button class="col btn font-weight-bold btn-outline-dark mx-2" id="spin_btn">
+            Spin the wheel
+          </button>
         </div>
-
-
       </div>
+    </div>
+  </div>
 
+  <div class="row content spinner">
+    <div class="col-8" id="canvasRenderer"></div>
+      <div class="mt-3 col-4 form-group" id="list"></div>
+  </div>
+  <div class="row content">
+    <div class="col-8"></div>
+    <div class="col-4">
       <div class="mt-5 picker_container">
         <div class="colorPicker"></div>
       </div>
     </div>
   </div>
+
   <footer>
     <p>
       <a href="https://github.com/D3R50N" target="_blank">

@@ -201,7 +201,6 @@ function autoChangeInput() {
     document.querySelectorAll("input").forEach((input, key) => {
         input.onchange = null;
         input.addEventListener("change", (e) => {
-            console.log(key);
             if (key + 1 < document.querySelectorAll("input").length)
                 document.querySelectorAll("input")
                     .item(key + 1).focus();
@@ -214,10 +213,21 @@ function autoChangeInput() {
 
 
 function loadSaved() {
-    let tab = localStorage.getItem("saved");
-    if (tab == null || tab == undefined) return;
+    let tab1 = localStorage.getItem("saved_inputs");
+    let tab2 = localStorage.getItem("saved_colors");
+
+    if (tab1 == null || tab1 == undefined) return;
+    if (tab2 == null || tab2 == undefined) return;
     
-    tab.split(",").forEach((value)=>addItem(value))
+    tab1.split(",").forEach((value)=>addItem(value));
+
+    tab2 = tab2.substring(0, tab2.length - 1);
+    tab2 = tab2.split("/,");
+
+    for (let index = 0; index < tab2.length; index++) {
+        colors[index] = tab2[index];
+    }
+
 }
 
 function run() {
@@ -246,12 +256,14 @@ function after_color_picker(index){
 }
 
 save_btn.addEventListener("click", (e) => {
-    let tab = [];
+    let tab1 = [];
+    let tab2 = [];
     for (const child of list.children) {
-        tab.push(child.querySelector("input").value);
+        tab1.push(child.querySelector("input").value);
+        tab2.push(child.querySelector(".dot").style.backgroundColor + "/");
     }
-    localStorage.setItem("saved", tab);
-    alert("Saved");
+    localStorage.setItem("saved_inputs", tab1);
+    localStorage.setItem("saved_colors", tab2);
 
 })
 

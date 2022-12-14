@@ -264,7 +264,7 @@ save_btn.addEventListener("click", (e) => {
     }
     localStorage.setItem("saved_inputs", tab1);
     localStorage.setItem("saved_colors", tab2);
-
+    alert("Saved");
 })
 
 
